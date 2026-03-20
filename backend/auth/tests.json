@@ -4,7 +4,7 @@
       "name": "Login admin",
       "method": "POST",
       "path": "/login",
-      "body": { "phone": "79132034981", "password": "249322" },
+      "body": { "phone": "79132034981", "password": "24932222" },
       "expectedStatus": 200,
       "expectedBody": { "ok": true },
       "bodyMatcher": "partial"
@@ -22,7 +22,7 @@
       "name": "Register duplicate phone",
       "method": "POST",
       "path": "/register",
-      "body": { "phone": "79132034981", "password": "249322", "name": "Test" },
+      "body": { "phone": "79132034981", "password": "test1", "name": "Test" },
       "expectedStatus": 409,
       "bodyMatcher": "partial",
       "expectedBody": { "ok": false }
