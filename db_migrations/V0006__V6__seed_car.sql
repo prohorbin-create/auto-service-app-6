@@ -1,0 +1,1 @@
+INSERT INTO cars (user_id, brand, model, year, plate, vin, color, mileage) SELECT id, 'Toyota', 'Camry', 2020, 'А 123 БВ 154', 'JT2BF22K1W0072625', 'Белый перламутр', 68400 FROM users WHERE phone='79001234567' LIMIT 1;

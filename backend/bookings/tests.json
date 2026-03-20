@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "name": "Create booking",
+      "method": "POST",
+      "path": "/",
+      "body": {"name": "Тест Тестов", "phone": "+7 900 000-00-00", "service": "Замена масла", "date": "25.03.2024", "time": "10:00"},
+      "expectedStatus": 200,
+      "bodyMatcher": "partial",
+      "expectedBody": {"ok": true}
+    },
+    {
+      "name": "Create booking missing fields",
+      "method": "POST",
+      "path": "/",
+      "body": {"name": "Тест"},
+      "expectedStatus": 400,
+      "bodyMatcher": "partial",
+      "expectedBody": {"ok": false}
+    }
+  ]
+}

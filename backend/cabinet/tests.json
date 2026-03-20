@@ -1,0 +1,20 @@
+{
+  "tests": [
+    {
+      "name": "Get car unauthorized",
+      "method": "GET",
+      "path": "/car",
+      "expectedStatus": 401,
+      "bodyMatcher": "partial",
+      "expectedBody": {"error": "Не авторизован"}
+    },
+    {
+      "name": "Get history unauthorized",
+      "method": "GET",
+      "path": "/history",
+      "expectedStatus": 401,
+      "bodyMatcher": "partial",
+      "expectedBody": {"error": "Не авторизован"}
+    }
+  ]
+}

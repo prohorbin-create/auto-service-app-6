@@ -1,0 +1,31 @@
+{
+  "tests": [
+    {
+      "name": "Login admin",
+      "method": "POST",
+      "path": "/login",
+      "body": {"phone": "79132034981", "password": "admin2024"},
+      "expectedStatus": 200,
+      "expectedBody": {"ok": true},
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Login wrong password",
+      "method": "POST",
+      "path": "/login",
+      "body": {"phone": "79132034981", "password": "wrong"},
+      "expectedStatus": 401,
+      "bodyMatcher": "partial",
+      "expectedBody": {"ok": false}
+    },
+    {
+      "name": "Register duplicate phone",
+      "method": "POST",
+      "path": "/register",
+      "body": {"phone": "79132034981", "password": "test123", "name": "Test"},
+      "expectedStatus": 409,
+      "bodyMatcher": "partial",
+      "expectedBody": {"ok": false}
+    }
+  ]
+}

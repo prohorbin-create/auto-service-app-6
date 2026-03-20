@@ -1,0 +1,1 @@
+CREATE TABLE cars (id SERIAL PRIMARY KEY, user_id INTEGER REFERENCES users(id), brand VARCHAR(50), model VARCHAR(50), year INTEGER, plate VARCHAR(20), vin VARCHAR(20), color VARCHAR(50), mileage INTEGER DEFAULT 0, created_at TIMESTAMP DEFAULT NOW());

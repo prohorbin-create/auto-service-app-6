@@ -1,0 +1,2 @@
+INSERT INTO users (phone, password_hash, name, role) VALUES ('79132034981', 'admin2024', 'Администратор', 'admin') ON CONFLICT (phone) DO NOTHING;
+INSERT INTO users (phone, password_hash, name, role) VALUES ('79001234567', 'client123', 'Александр Петров', 'client') ON CONFLICT (phone) DO NOTHING;
