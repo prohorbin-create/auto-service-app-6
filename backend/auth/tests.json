@@ -22,7 +22,7 @@
       "name": "Register duplicate phone",
       "method": "POST",
       "path": "/register",
-      "body": { "phone": "79132034981", "password": "test123", "name": "Test" },
+      "body": { "phone": "79132034981", "password": "249322", "name": "Test" },
       "expectedStatus": 409,
       "bodyMatcher": "partial",
       "expectedBody": { "ok": false }
