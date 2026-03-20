@@ -1,0 +1,39 @@
+{
+  "tests": [
+    {
+      "name": "Get all orders",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "bodyMatcher": "partial",
+      "expectedBody": {"ok": true}
+    },
+    {
+      "name": "Create order",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "client_name": "Тест Тестов",
+        "client_phone": "+7 900 111-22-33",
+        "car": "Toyota Camry 2020",
+        "service": "Замена масла",
+        "date": "25.03.2024",
+        "time": "10:00",
+        "master": "Иванов С.А.",
+        "total": 1500
+      },
+      "expectedStatus": 200,
+      "bodyMatcher": "partial",
+      "expectedBody": {"ok": true}
+    },
+    {
+      "name": "Update status",
+      "method": "PUT",
+      "path": "/status",
+      "body": {"id": 1, "status": "in_progress"},
+      "expectedStatus": 200,
+      "bodyMatcher": "partial",
+      "expectedBody": {"ok": true}
+    }
+  ]
+}

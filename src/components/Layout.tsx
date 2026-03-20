@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import Icon from '@/components/ui/icon';
+import { useState } from "react";
+import Icon from "@/components/ui/icon";
 
 interface User {
   name: string;
@@ -15,16 +15,22 @@ interface LayoutProps {
   onLogout: () => void;
 }
 
-type IconName = 'Home' | 'Wrench' | 'CalendarCheck' | 'MapPin';
+type IconName = "Home" | "Wrench" | "CalendarCheck" | "MapPin";
 
-export default function Layout({ children, currentPage, onNavigate, user, onLogout }: LayoutProps) {
+export default function Layout({
+  children,
+  currentPage,
+  onNavigate,
+  user,
+  onLogout,
+}: LayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { id: 'home', label: 'Главная', icon: 'Home' },
-    { id: 'services', label: 'Услуги', icon: 'Wrench' },
-    { id: 'booking', label: 'Запись', icon: 'CalendarCheck' },
-    { id: 'contacts', label: 'Контакты', icon: 'MapPin' },
+    { id: "home", label: "Главная", icon: "Home" },
+    { id: "services", label: "Услуги", icon: "Wrench" },
+    { id: "booking", label: "Запись", icon: "CalendarCheck" },
+    { id: "contacts", label: "Контакты", icon: "MapPin" },
   ];
 
   return (
@@ -34,28 +40,32 @@ export default function Layout({ children, currentPage, onNavigate, user, onLogo
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo */}
           <button
-            onClick={() => onNavigate('home')}
+            onClick={() => onNavigate("home")}
             className="flex items-center gap-3 group"
           >
             <div className="w-10 h-10 rounded-xl grad-primary flex items-center justify-center shadow-lg">
               <Icon name="Gauge" size={22} className="text-white" />
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-display text-xl font-bold text-gray-900 tracking-wide">АВТОСПЕКТР</span>
-              <span className="text-[10px] text-blue-500 font-golos font-medium tracking-widest uppercase">Автосервис</span>
+              <span className="font-display text-xl font-bold text-gray-900 tracking-wide">
+                АВТОСПЕКТР
+              </span>
+              <span className="text-[10px] text-blue-500 font-golos font-medium tracking-widest uppercase">
+                Автосервис
+              </span>
             </div>
           </button>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
-            {navItems.map(item => (
+            {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
                   currentPage === item.id
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                 }`}
               >
                 <Icon name={item.icon as IconName} size={16} />
@@ -76,11 +86,13 @@ export default function Layout({ children, currentPage, onNavigate, user, onLogo
 
             {user ? (
               <div className="flex items-center gap-2">
-                {user.role === 'admin' && (
+                {user.role === "admin" && (
                   <button
-                    onClick={() => onNavigate('admin')}
+                    onClick={() => onNavigate("admin")}
                     className={`px-3 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
-                      currentPage === 'admin' ? 'bg-orange-500 text-white' : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+                      currentPage === "admin"
+                        ? "bg-orange-500 text-white"
+                        : "bg-orange-50 text-orange-600 hover:bg-orange-100"
                     }`}
                   >
                     <Icon name="ShieldCheck" size={16} />
@@ -88,9 +100,11 @@ export default function Layout({ children, currentPage, onNavigate, user, onLogo
                   </button>
                 )}
                 <button
-                  onClick={() => onNavigate('cabinet')}
+                  onClick={() => onNavigate("cabinet")}
                   className={`px-3 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
-                    currentPage === 'cabinet' ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                    currentPage === "cabinet"
+                      ? "bg-blue-600 text-white"
+                      : "bg-blue-50 text-blue-600 hover:bg-blue-100"
                   }`}
                 >
                   <Icon name="User" size={16} />
@@ -106,7 +120,7 @@ export default function Layout({ children, currentPage, onNavigate, user, onLogo
               </div>
             ) : (
               <button
-                onClick={() => onNavigate('auth')}
+                onClick={() => onNavigate("auth")}
                 className="px-4 py-2 rounded-xl grad-primary text-white text-sm font-medium btn-glow"
               >
                 Войти
@@ -117,7 +131,7 @@ export default function Layout({ children, currentPage, onNavigate, user, onLogo
               className="md:hidden p-2 rounded-xl text-gray-600 hover:bg-gray-100"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
-              <Icon name={mobileOpen ? 'X' : 'Menu'} size={22} />
+              <Icon name={mobileOpen ? "X" : "Menu"} size={22} />
             </button>
           </div>
         </div>
@@ -126,12 +140,17 @@ export default function Layout({ children, currentPage, onNavigate, user, onLogo
         {mobileOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white/95 backdrop-blur px-4 pb-4 pt-2 animate-fade-in">
             <div className="flex flex-col gap-1">
-              {navItems.map(item => (
+              {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => { onNavigate(item.id); setMobileOpen(false); }}
+                  onClick={() => {
+                    onNavigate(item.id);
+                    setMobileOpen(false);
+                  }}
                   className={`w-full px-4 py-3 rounded-xl text-sm font-medium text-left flex items-center gap-3 transition-all ${
-                    currentPage === item.id ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-50'
+                    currentPage === item.id
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   <Icon name={item.icon as IconName} size={18} />
@@ -150,9 +169,7 @@ export default function Layout({ children, currentPage, onNavigate, user, onLogo
         )}
       </header>
 
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
 
       {/* Footer */}
       <footer className="bg-[#0D1117] text-gray-300 pt-12 pb-6 mt-16">
@@ -164,29 +181,51 @@ export default function Layout({ children, currentPage, onNavigate, user, onLogo
                   <Icon name="Gauge" size={22} className="text-white" />
                 </div>
                 <div>
-                  <div className="font-display text-xl text-white font-bold">АВТОСПЕКТР</div>
-                  <div className="text-xs text-blue-400 tracking-widest uppercase">Автосервис</div>
+                  <div className="font-display text-xl text-white font-bold">
+                    АВТОСПЕКТР
+                  </div>
+                  <div className="text-xs text-blue-400 tracking-widest uppercase">
+                    Автосервис
+                  </div>
                 </div>
               </div>
               <p className="text-sm text-gray-400 leading-relaxed">
-                Профессиональный сервис вашего автомобиля. Качество и честность — наши главные ценности.
+                Профессиональный сервис вашего автомобиля. Качество и честность
+                — наши главные ценности.
               </p>
             </div>
             <div>
-              <div className="font-display text-lg text-white font-semibold mb-4 tracking-wide">КОНТАКТЫ</div>
+              <div className="font-display text-lg text-white font-semibold mb-4 tracking-wide">
+                КОНТАКТЫ
+              </div>
               <div className="space-y-3">
-                <a href="tel:+79132034981" className="flex items-center gap-2 text-sm hover:text-orange-400 transition-colors">
+                <a
+                  href="tel:+79132034981"
+                  className="flex items-center gap-2 text-sm hover:text-orange-400 transition-colors"
+                >
                   <Icon name="Phone" size={15} className="text-orange-500" />
                   +7 913 203-49-81
                 </a>
                 <div className="flex items-start gap-2 text-sm">
-                  <Icon name="MapPin" size={15} className="text-orange-500 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-400">г. Новосибирск, ул. Плотинная, 1Б<br/><span className="text-gray-500 text-xs">(вход через Родные масла)</span></span>
+                  <Icon
+                    name="MapPin"
+                    size={15}
+                    className="text-orange-500 mt-0.5 flex-shrink-0"
+                  />
+                  <span className="text-gray-400">
+                    г. Новосибирск, ул. Плотинная, 1Б
+                    <br />
+                    <span className="text-gray-500 text-xs">
+                      (вход через Родные масла)
+                    </span>
+                  </span>
                 </div>
               </div>
             </div>
             <div>
-              <div className="font-display text-lg text-white font-semibold mb-4 tracking-wide">РЕЖИМ РАБОТЫ</div>
+              <div className="font-display text-lg text-white font-semibold mb-4 tracking-wide">
+                РЕЖИМ РАБОТЫ
+              </div>
               <div className="space-y-2 text-sm text-gray-400">
                 <div className="flex justify-between">
                   <span>Пн–Пт</span>
@@ -194,7 +233,7 @@ export default function Layout({ children, currentPage, onNavigate, user, onLogo
                 </div>
                 <div className="flex justify-between">
                   <span>Суббота</span>
-                  <span className="text-white">9:00 – 17:00</span>
+                  <span className="text-white">Выходной</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Воскресенье</span>
