@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import Icon from '@/components/ui/icon';
+import { bookingsApi } from '@/lib/api';
 
 interface BookingPageProps {
-  user: { name: string; role: string; phone: string } | null;
+  user: { id: string; name: string; role: string; phone: string } | null;
   onNavigate: (page: string) => void;
 }
 
@@ -55,7 +56,16 @@ export default function BookingPage({ user, onNavigate }: BookingPageProps) {
     return false;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!selectedDate) return;
+    await bookingsApi.create({
+      name,
+      phone,
+      service: selectedService,
+      date: `${selectedDate.getDate()} ${months[selectedDate.getMonth()]}`,
+      time: selectedTime,
+      comment,
+    }, user?.id).catch(() => {});
     setSubmitted(true);
   };
 

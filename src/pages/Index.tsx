@@ -9,6 +9,7 @@ import ContactsPage from '@/pages/ContactsPage';
 import AdminPage from '@/pages/AdminPage';
 
 interface User {
+  id: string;
   name: string;
   role: string;
   phone: string;

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
+import { ordersApi } from '@/lib/api';
 
 type OrderStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
 
@@ -38,6 +39,7 @@ const servicesList = ['Замена масла и фильтра', 'Планов
 
 export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
+  const [loadingOrders, setLoadingOrders] = useState(true);
   const [activeTab, setActiveTab] = useState<'orders' | 'create'>('orders');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -48,6 +50,26 @@ export default function AdminPage() {
   const [newOrder, setNewOrder] = useState<Partial<Order>>({
     client: '', phone: '', car: '', service: '', date: '', time: '', master: masters[0], status: 'scheduled', total: 0, comment: '',
   });
+
+  useEffect(() => {
+    ordersApi.getAll().then(data => {
+      if (data.ok && data.orders?.length) {
+        setOrders(data.orders.map((o: Record<string, unknown>) => ({
+          id: String(o.order_number),
+          client: String(o.client_name),
+          phone: String(o.client_phone),
+          car: String(o.car || ''),
+          service: String(o.service),
+          date: String(o.date),
+          time: String(o.time),
+          master: String(o.master || ''),
+          status: String(o.status) as OrderStatus,
+          total: Number(o.total) || 0,
+          comment: String(o.comment || ''),
+        })));
+      }
+    }).catch(() => {}).finally(() => setLoadingOrders(false));
+  }, []);
 
   const filtered = orders.filter(o => {
     const matchStatus = filterStatus === 'all' || o.status === filterStatus;
@@ -70,8 +92,23 @@ export default function AdminPage() {
   };
 
   const createOrder = () => {
-    const id = `ЗН-${String(Math.max(...orders.map(o => parseInt(o.id.split('-')[1]))) + 1).padStart(4, '0')}`;
-    setOrders(prev => [{ ...newOrder as Order, id }, ...prev]);
+    ordersApi.create({
+      client_name: newOrder.client,
+      client_phone: newOrder.phone,
+      car: newOrder.car,
+      service: newOrder.service,
+      date: newOrder.date,
+      time: newOrder.time,
+      master: newOrder.master,
+      total: newOrder.total,
+      comment: newOrder.comment,
+      status: newOrder.status,
+    }).then(data => {
+      if (data.ok) {
+        const id = data.order_number || `ЗН-${String(Date.now()).slice(-4)}`;
+        setOrders(prev => [{ ...newOrder as Order, id }, ...prev]);
+      }
+    }).catch(() => {});
     setNewOrder({ client: '', phone: '', car: '', service: '', date: '', time: '', master: masters[0], status: 'scheduled', total: 0, comment: '' });
     setActiveTab('orders');
   };
@@ -82,6 +119,7 @@ export default function AdminPage() {
 
   const updateStatus = (id: string, status: OrderStatus) => {
     setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+    ordersApi.updateStatus(Number(id.replace(/\D/g, '')) || 0, status).catch(() => {});
   };
 
   return (

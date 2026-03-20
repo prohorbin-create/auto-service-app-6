@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
+import { cabinetApi } from '@/lib/api';
 
 interface User {
+  id: string;
   name: string;
   role: string;
   phone: string;
@@ -79,6 +81,21 @@ const statusMap: Record<string, { label: string; color: string }> = {
 
 export default function CabinetPage({ user, onNavigate }: CabinetPageProps) {
   const [activeTab, setActiveTab] = useState<'car' | 'history' | 'notifications'>('car');
+  const [car, setCar] = useState(MOCK_CAR);
+  const [history, setHistory] = useState(MOCK_HISTORY);
+  const [loadingData, setLoadingData] = useState(true);
+
+  useEffect(() => {
+    if (!user.id) return;
+    setLoadingData(true);
+    Promise.all([
+      cabinetApi.getCar(user.id),
+      cabinetApi.getHistory(user.id),
+    ]).then(([carData, historyData]) => {
+      if (carData.ok && carData.car) setCar({ ...MOCK_CAR, ...carData.car });
+      if (historyData.ok && historyData.orders?.length) setHistory(historyData.orders);
+    }).catch(() => {}).finally(() => setLoadingData(false));
+  }, [user.id]);
 
   return (
     <div className="container mx-auto px-4 py-8 animate-fade-in">
@@ -147,16 +164,16 @@ export default function CabinetPage({ user, onNavigate }: CabinetPageProps) {
                 <Icon name="Car" size={22} className="text-white" />
               </div>
               <div>
-                <div className="font-semibold text-lg text-gray-900">{MOCK_CAR.brand} {MOCK_CAR.model}</div>
-                <div className="text-gray-400 text-sm">{MOCK_CAR.year} год</div>
+                <div className="font-semibold text-lg text-gray-900">{car.brand} {car.model}</div>
+                <div className="text-gray-400 text-sm">{car.year} год</div>
               </div>
             </div>
             <div className="space-y-3">
               {[
-                { label: 'Гос. номер', value: MOCK_CAR.plate },
-                { label: 'VIN', value: MOCK_CAR.vin, mono: true },
-                { label: 'Цвет', value: MOCK_CAR.color },
-                { label: 'Пробег', value: `${MOCK_CAR.mileage.toLocaleString()} км` },
+                { label: 'Гос. номер', value: car.plate },
+                { label: 'VIN', value: car.vin, mono: true },
+                { label: 'Цвет', value: car.color },
+                { label: 'Пробег', value: `${car.mileage.toLocaleString()} км` },
               ].map((item, i) => (
                 <div key={i} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
                   <span className="text-gray-500 text-sm">{item.label}</span>
@@ -172,7 +189,7 @@ export default function CabinetPage({ user, onNavigate }: CabinetPageProps) {
                 <Icon name="AlertTriangle" size={20} className="text-orange-500" />
                 <div className="font-semibold text-gray-800">Следующее ТО</div>
               </div>
-              <div className="text-2xl font-bold text-orange-600 mb-1">{MOCK_CAR.nextTo}</div>
+              <div className="text-2xl font-bold text-orange-600 mb-1">{car.nextTo}</div>
               <div className="text-gray-500 text-sm">или при пробеге 70 000 км</div>
               <button
                 onClick={() => onNavigate('booking')}
@@ -184,9 +201,9 @@ export default function CabinetPage({ user, onNavigate }: CabinetPageProps) {
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="font-semibold text-gray-800 mb-3">Последний визит</div>
-              <div className="text-sm text-gray-500 mb-1">{MOCK_HISTORY[0].date}</div>
+              <div className="text-sm text-gray-500 mb-1">{history[0].date}</div>
               <div className="space-y-1">
-                {MOCK_HISTORY[0].services.map((s, i) => (
+                {history[0].services.map((s, i) => (
                   <div key={i} className="text-sm text-gray-700 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-orange-500 flex-shrink-0" />
                     {s}
@@ -194,8 +211,8 @@ export default function CabinetPage({ user, onNavigate }: CabinetPageProps) {
                 ))}
               </div>
               <div className="mt-3 pt-3 border-t border-gray-50 flex justify-between items-center">
-                <span className="text-xs text-gray-400">{MOCK_HISTORY[0].id}</span>
-                <span className="font-bold text-gray-800">{MOCK_HISTORY[0].total.toLocaleString()} ₽</span>
+                <span className="text-xs text-gray-400">{history[0].id}</span>
+                <span className="font-bold text-gray-800">{history[0].total.toLocaleString()} ₽</span>
               </div>
             </div>
           </div>
@@ -205,7 +222,7 @@ export default function CabinetPage({ user, onNavigate }: CabinetPageProps) {
       {/* History Tab */}
       {activeTab === 'history' && (
         <div className="space-y-4 animate-fade-in">
-          {MOCK_HISTORY.map((item) => (
+          {history.map((item) => (
             <div key={item.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-start justify-between mb-3">
                 <div>

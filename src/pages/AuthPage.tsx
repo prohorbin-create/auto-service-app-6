@@ -1,25 +1,12 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
+import { authApi } from '@/lib/api';
 
 interface AuthPageProps {
-  onLogin: (user: { name: string; role: string; phone: string }) => void;
+  onLogin: (user: { id: string; name: string; role: string; phone: string }) => void;
   onNavigate: (page: string) => void;
 }
 
-const DEMO_USERS = [
-  {
-    phone: "79001234567",
-    password: "client123",
-    name: "Александр Петров",
-    role: "client",
-  },
-  {
-    phone: "79132034981",
-    password: "249322",
-    name: "Администратор",
-    role: "admin",
-  },
-];
 
 export default function AuthPage({ onLogin, onNavigate }: AuthPageProps) {
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -29,6 +16,7 @@ export default function AuthPage({ onLogin, onNavigate }: AuthPageProps) {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const formatPhone = (val: string) => {
     const digits = val.replace(/\D/g, "");
@@ -49,41 +37,46 @@ export default function AuthPage({ onLogin, onNavigate }: AuthPageProps) {
 
   const getDigits = () => phone.replace(/\D/g, "");
 
-  const handleLogin = () => {
-    setError("");
-    const digits = getDigits();
-    const user = DEMO_USERS.find(
-      (u) => u.phone === digits && u.password === password,
-    );
-    if (user) {
-      onLogin({ name: user.name, role: user.role, phone: digits });
-    } else {
-      setError("Неверный номер телефона или пароль");
+  const handleLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const data = await authApi.login(getDigits(), password);
+      if (data.ok) {
+        onLogin({ id: String(data.user.id), name: data.user.name, role: data.user.role, phone: data.user.phone });
+      } else {
+        setError(data.error || 'Неверный номер или пароль');
+      }
+    } catch {
+      setError('Ошибка сети. Попробуйте позже.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleRegister = () => {
-    setError("");
-    setSuccess("");
+  const handleRegister = async () => {
+    setError('');
+    setSuccess('');
     const digits = getDigits();
-    if (!name.trim()) {
-      setError("Введите ваше имя");
-      return;
+    if (!name.trim()) { setError('Введите ваше имя'); return; }
+    if (digits.length < 11) { setError('Введите корректный номер телефона'); return; }
+    if (password.length < 6) { setError('Пароль должен быть не менее 6 символов'); return; }
+    if (password !== confirmPassword) { setError('Пароли не совпадают'); return; }
+    setLoading(true);
+    try {
+      const data = await authApi.register(digits, password, name.trim());
+      if (data.ok) {
+        setSuccess('Аккаунт создан! Теперь войдите.');
+        setMode('login');
+        setPassword(''); setConfirmPassword('');
+      } else {
+        setError(data.error || 'Ошибка регистрации');
+      }
+    } catch {
+      setError('Ошибка сети. Попробуйте позже.');
+    } finally {
+      setLoading(false);
     }
-    if (digits.length < 11) {
-      setError("Введите корректный номер телефона");
-      return;
-    }
-    if (password.length < 6) {
-      setError("Пароль должен быть не менее 6 символов");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("Пароли не совпадают");
-      return;
-    }
-    setSuccess("Аккаунт создан! Теперь вы можете войти.");
-    setMode("login");
   };
 
   return (
@@ -237,9 +230,10 @@ export default function AuthPage({ onLogin, onNavigate }: AuthPageProps) {
 
               <button
                 onClick={mode === "login" ? handleLogin : handleRegister}
-                className="w-full py-3.5 rounded-xl grad-primary text-white font-semibold text-base btn-glow transition-all mt-2"
+                disabled={loading}
+                className="w-full py-3.5 rounded-xl grad-primary text-white font-semibold text-base btn-glow transition-all mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {mode === "login" ? "Войти в кабинет" : "Создать аккаунт"}
+                {loading ? "Загрузка..." : mode === "login" ? "Войти в кабинет" : "Создать аккаунт"}
               </button>
             </div>
           </div>
